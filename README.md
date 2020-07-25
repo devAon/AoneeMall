@@ -19,44 +19,49 @@
 2. **그레이들 프로젝트를 스프링 부트 프로젝트로 변경하기**
 
    > build.gradle
+   
+   
 
-   ```
-   buildscript {
-       ext {
-           springBootVersion = '2.1.9.RELEASE'
-       }
-       repositories {
-           mavenCentral()
-           jcenter()
-       }
-       dependencies {
-           classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-       }
-   }
-   
-   apply plugin: 'java'
-   apply plugin: 'eclipse'
-   apply plugin: 'org.springframework.boot'
-   apply plugin: 'io.spring.dependency-management'
-   
-   group = 'com.devAon'
+```
+buildscript {
+    ext {
+        springBootVersion = '2.1.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.devAon'
 version '1.0.4-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
-   
-   sourceCompatibility = 1.8
-   
-   repositories {
-       mavenCentral()
-       jcenter()
-   }
-   
-   dependencies {
-       compile('org.springframework.boot:spring-boot-starter-web')
-       testCompile('org.springframework.boot:spring-boot-starter-test')
-   }
-   
-   ```
-   
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+
+```
+
    👉 프로젝트의 플러그인 의존성 관리를 위한 설정
+   
+   
 
 * **ext** 
 
