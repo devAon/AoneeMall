@@ -4,6 +4,19 @@
 
 <br>
 
+## ⚙ 프로젝트 개발환경
+프로젝트 개발 환경은 다음과 같습니다.
+
+IDE : IntelliJ IDEA Ultimate   
+Git Tools : Git Bash   
+OS : Window   
+SpringBoot 2.1.9   
+Java8   
+Gradle   
+
+ 👉 springBootVersion 2.1.7 / 2.1.8 / 2.1.9 모두 괜찮으나, 2.2 이상 버전에서는 정상작동 하지 않는다.
+
+<br>
 
 
 ## 📌 feature-1 : 프로젝트 생성
