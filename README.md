@@ -17,7 +17,7 @@ Gradle 4.10.2
  👉 springBootVersion 2.1.7 / 2.1.8 / 2.1.9 모두 괜찮으나, 2.2 이상 버전에서는 정상작동 하지 않는다.
 
  👉 Gradle 5.x에서는 정상작동 하지 않는다.
-		`Gradle 4.10.2  ` 로 변경하는 방법 ? 
+		🙋‍♀️ `Gradle 4.10.2  ` 로 변경하는 방법 ? 
 
 ​		인텔리제이에서 `alt+F12` 눌러 👉  터미널에서 `gradlew wrapper --gradle-version 4.10.2` 명령어 실행
 
@@ -71,6 +71,7 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -107,7 +108,12 @@ dependencies {
 
   👉 요즘은 jcenter을 더 많이 사용하지만, 프로젝트에서는 둘 다 등록해서 사용할 것이다.
 
-
+* dependencies
+  * **lombok**
+    🙋‍♀️ 추가하는 방법 ?
+    **step 1 )** `build.gradle`의 `dependencies`에 `compile('org.projectlombok:lombok')` 추가
+    **step 2 )** `Setting > Build > Compiler > Annotation Processros` 에서 `Enable annotation processing` 체크를 통해 
+    		해당 프로젝트에서 롬복을 사용할 수 있도록 해줘야 한다. (롬복은 프로젝트마다 설정해야 한다 ! ! !)
 
 
 
@@ -181,6 +187,12 @@ public class Application {
   : HTTP Method인 Get의 요청을 받을 수 있는 API를 만들어준다
 
 * **@PostMapping, @PutMapping, @DeleteMapping**
+
+* **@RequestParam**
+
+  : 외부에서 API로 넘긴 파라미터를 가져오는 어노테이션
+
+  파라미터에서 name `@RequestParam("name")`이란 이름으로 넘긴 값을 메소드 파라미터 name`(String name)`에 저장
 
 
 
@@ -296,3 +308,49 @@ public class Application {
   `응답 본문의 내용을 검증`한다.
 
   Controller에서 리턴하는 "hello"와 내용이 일치하는지 검증한다. 
+
+* **assertThat**
+
+  : `org.assertj.core.api.Assertions.assertThat` assertj의 테스트 검증 라이브러리의 검증 메소드
+
+  검증하고 싶은 대상을 메소드 인자로 받는다
+
+  메소드 체이닝이 지원되어 isEqualTo와 같이 메소드를 이어서 사용할 수 있다.
+
+* **isEqualTo**
+
+  : assertj의 동등 비교 메소드
+
+  assertThat에 있는 값과 isEqualTo의 값을 비교해서 같을 때만 성공
+
+* **param**
+
+  : API 테스트할 때 사용될 요청 파라미터를 설정
+
+  단, 값은 String만 허용된다.
+
+  따라서, 숫자/날짜/숫자 등 문자열로 변경해야만 가능
+
+* **jsonPath**
+
+  : JSON 응답값을 필드별로 검증할 수 있는 메소드
+
+  $를 기준으로 필드명 명시
+
+  ​	ex) $.amount
+
+<br>
+
+
+
+### 📝 lombok 사용
+
+* @Getter
+
+  선언된 모든 필드의 get 메소드를 생성해준다
+
+* @RequireArgsConstructor
+
+  선언된 모든 final 필드가 포함된 생성자를 생성해줌
+
+  final이 없는 필드는 생성자에 포함되지 않는다.
