@@ -5,7 +5,7 @@
 <br>
 
 ## ⚙ 프로젝트 개발환경
-프로젝트 개발 환경은 다음과 같습니다.
+프로젝트 개발 환경은 다음과 같다.
 
 IDE : IntelliJ IDEA Ultimate   
 Git Tools : Git Bash   
@@ -114,6 +114,58 @@ dependencies {
 
 ## 📌 feature-4 : TDD
 
+### 📝 SpringBootApplication 추가
+
+
+
+```
+package com.devAon.aoneemall;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args){
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+```
+
+
+
+* **해당 클래스는 프로젝트의 메인 클래스**
+
+* **@SpringBootApplication**
+
+  : 스프링 부트의 자동 설정, 스프링 Bean 읽기와 생성 모두 자동으로 설정된다.
+
+  ✍ **주의** ✍    
+
+   @SpringBootApplication 이 있는 위치부터 설정을 읽어가기 때문에 항! 상! **프로젝트의 최상단**에 위치해야 한다.
+
+* **SpringApplication.run**
+
+  : 내장 WAS( Web Application Server)를 실행한다.
+
+  🐥 **내장 WAS 란 ?**
+
+  * 외부에 WAS를 두지 않고 애플리케이션을 실행할 때 내부에서 WAS를 실행하는 것을 의미
+  * 왜 ? 
+    항상 서버에 톰캣을 설치할 필요가 없다.
+    스프링 부트로 만들어진 Jar 파일 (실행 가능한 Java 패키징 파일)로 실행하면 된다.
+  * `언제 어디서나 같은 환경에서 스프링 부트를 배포` 할 수 있기 때문에 내장 WAS 사용 권장
+  * 외장 WAS 지양하는 이유 ? 
+    모든 서버는 WAS의 종류, 버전, 설정을 일치시켜야만 한다.   ~~Oh my God~~  
+
+
+
+
+
+
+
+
 
 
 
@@ -122,15 +174,15 @@ dependencies {
 
 **Test Driven Development, 테스트 주도 개발**
 
-* Red
+* **Red**
 
   : 항상 실패하는 테스트를 먼저 작성
 
-* Green
+* **Green**
 
   : 테스트가 통과하는 프로덕션 코드를 작성
 
-* Refactor
+* **Refactor**
 
   : 테스트가 통과하면 프로덕션 코드를 리팩토링
 
@@ -142,9 +194,9 @@ dependencies {
 
 ### 📝 TDD 장점
 
-1. 빠른 피드백 가능   
+1. **빠른 피드백 가능**   
 
-   ❌ TDD 사용 안한다면 ? 번거롭다     
+   ❌ TDD 사용 안한다면 ? `번거롭다     `
 
    ​	프로그램(Tomcat)을 실행하고    
 
@@ -154,9 +206,9 @@ dependencies {
 
    ​	결과가 다르면 다시 프로그램(Tomcat)을 중지하고 코드 수정   
 
-2. 자동검증 가능   
+2. **자동검증 가능**   
 
-3. 개발자가 만든 기능을 안전하게 보호   
+3. **개발자가 만든 기능을 안전하게 보호**   
 
    EX)   
 
@@ -174,5 +226,5 @@ dependencies {
 
 
 
-### 📝 테스트 코드 작성
+### 
 
