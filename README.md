@@ -354,3 +354,83 @@ public class Application {
   선언된 모든 final 필드가 포함된 생성자를 생성해줌
 
   final이 없는 필드는 생성자에 포함되지 않는다.
+
+
+
+
+
+
+
+<br><br><br>
+
+
+
+## 📌 feature-8 : JPA
+
+### 📝 JPA란 ?
+
+객체지향적으로 프로그래밍을 하고, JPA가 이를 RDBMS에 맞게 SQL을 대신 생성해서 실행한다.   
+
+즉, JPA는 중간에서 패러다임을 일치시켜주는 기술이다.   
+
+
+
+🙋‍♀️ **무슨 소리냐구 ?**    
+
+RDBMS와 객체지향 프로그래밍 언어의 패러다임은 서로 달라 문제가 발생한다. (RDBMS에 없는 상속의 개념도 해결해줌 !)   
+
+그런데! ! !  JPA가 이를 해결해준다.  ~~WOW~~
+
+
+
+🐥 **참고**
+
+`RDBMS 패러다임 `: 어떻게 데이터를 저장할지 초점이 맞춰진 기술   
+
+`객체지향 프로그래밍 언어 패러다임` : 객체는 기능과 속성을 한 곳에 관리하는 기술   
+
+
+
+<br>
+
+### 📝 Spring Data JPA란 ?
+
+JPA : 인터페이스로서 자바 표준명세서
+
+인터페이스인 JPA를 사용하기 위해서는 구현체가 필요하다.
+
+대표적으로 Hibernate, Eclipse, Link등이 있다.   
+
+   
+
+
+
+하지만 Spring에서 JPA를 사용할 때는 이 구현체를 직접 다루지 않는다.
+
+Spring Data JPA라는 모듈을 이용하여 JPA 기술을 다룬다.
+
+`JPA 👈 Hibernate  👈 Spring Data JPA`
+
+Hibernate와 Spring Data JPA 쓰는 것 사이에는 큰 차이가 없다   
+
+   
+
+**🙋‍♀️ 그러나 Spring Data JPA 가 등장한 이유는 ?** 
+
+
+
+> 스프링 진영에서 개발함
+
+
+
+1) 구현체 교체의 용이성
+
+​		Hibernate 외에 다른 구현체로 쉽게 교체하기 위함
+
+2) 저장소 교체의 용이성
+
+​        RDBMS 외에 다른 저장소로 쉽게 교체하기 위함
+
+​		만약, NoSQL인 MongoDB로 교체가 필요하다면 Spring Data MongoDB로 의존성만 교체하면 된다.
+
+👉 Spring Data 의 하위 프로젝트들은 기본적인 CRUD의 인터페이스가 같고 1)2)와 같은 장점들로 인해 Spring Data JPA를 권장한다.
