@@ -81,6 +81,7 @@ dependencies {
   : build.gradle에서 사용하는 전역변수를 설정한다는 의미
 
 * **spring-boot-gradle-plugin:${springBootVersion}**
+
   : springBootVersion = '2.1.9.RELEASE' 를 의존성으로 받겠다는 의미
   
 * **repositories**
