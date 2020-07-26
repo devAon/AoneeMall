@@ -4,6 +4,8 @@
 
 <br>
 
+
+
 ## ⚙ 프로젝트 개발환경
 프로젝트 개발 환경은 다음과 같다.
 
@@ -21,10 +23,154 @@ Gradle 4.10.2
 
 ​		인텔리제이에서 `alt+F12` 눌러 👉  터미널에서 `gradlew wrapper --gradle-version 4.10.2` 명령어 실행
 
+
+
+
+
 <br>
 
 
+
+
+
+
+
+## 🧶 build.gradle
+```
+buildscript {
+    ext {
+        springBootVersion = '2.1.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.devAon'
+version '1.0.4-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('com.h2database:h2')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+```
+
+ 
+
+* **ext** 
+
+  : build.gradle에서 사용하는 전역변수를 설정한다는 의미
+
+* **spring-boot-gradle-plugin:${springBootVersion}**
+
+  : springBootVersion = '2.1.9.RELEASE' 를 의존성으로 받겠다는 의미
+
+* **repositories**
+
+  : 각종 의존성 (라이브러리)들을 어떤 원격 저장소에 받을지 정한다
+
+  * **mavenCentral()**
+
+    : 기본적으로 많이 사용. 
+
+      하지만 라이브러리 업로드를 위해 정말 많은 과정과 설정이 필요해서 힘듬
+
+  * **jcenter()**
+
+    : 라이브러리 업로드 문제점 개선해서 간단하게 해줌
+
+    jcenter에 라이브러리를 업로드하면 mavenCentral에도 업로드될 수 있도록 자동화할 수 있다. 
+
+  👉 요즘은 jcenter을 더 많이 사용하지만, 프로젝트에서는 둘 다 등록해서 사용할 것이다.
+
+* **dependencies**
+
+  * **lombok**
+    🙋‍♀️ 추가하는 방법 ?   
+    **step 1 )** `build.gradle`의 `dependencies`에 `compile('org.projectlombok:lombok')` 추가   
+    **step 2 )** `Setting > Build > Compiler > Annotation Processros` 에서 `Enable annotation processing` 체크를 통해   
+    		해당 프로젝트에서 롬복을 사용할 수 있도록 해줘야 한다. (롬복은 프로젝트마다 설정해야 한다 ! ! !)
+
+  * **spring-boot-starter-jpa**
+    스프링 부트용 Spring Data Jpa 추상화 라이브러리
+
+    스프링 부트 버전에 맞춰 자동으로 JPA 관련 라이브러리들의 버전을 관리해준다
+    
+  * **h2**
+  
+    인메모리 RDBMS
+  
+    별도의 설치 없이 프로젝트 의존성만으로 관리할 수 있다
+  
+    메모리에서 실행되기 때문에 애플리케이션을 재시작할 때마다 초기화된다는 점을 이용하여 테스트 용도로 많이 사용된다
+  
+    AoneeMAll 프로젝트에서는 JPA의 테스트, 로컬 환경에서의 구동에서 사용할 예정 !
+
+
+
+
+
+
+
+<br>
+
+
+
+## 🔗 패키지 구조
+
+### src-main-java
+
+* web : 컨트롤러와 관련된 클래스
+* domain : 도메인 (소프트웨어에 대한 요구사항 or 문제영역)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+<br>
+
+
+
 ## 📌 feature-1 : 프로젝트 생성
+
+> build.gralde 의 코드의 역할 및 의존성 추가 방법을 스스로 해보자 !
 
 
 
@@ -79,43 +225,6 @@ dependencies {
 ```
 
    👉 프로젝트의 플러그인 의존성 관리를 위한 설정
-
-   
-
-* **ext** 
-
-  : build.gradle에서 사용하는 전역변수를 설정한다는 의미
-
-* **spring-boot-gradle-plugin:${springBootVersion}**
-
-  : springBootVersion = '2.1.9.RELEASE' 를 의존성으로 받겠다는 의미
-  
-* **repositories**
-
-  : 각종 의존성 (라이브러리)들을 어떤 원격 저장소에 받을지 정한다
-
-  * **mavenCentral()**
-
-    : 기본적으로 많이 사용. 
-
-      하지만 라이브러리 업로드를 위해 정말 많은 과정과 설정이 필요해서 힘듬
-
-  * **jcenter()**
-
-    : 라이브러리 업로드 문제점 개선해서 간단하게 해줌
-
-    jcenter에 라이브러리를 업로드하면 mavenCentral에도 업로드될 수 있도록 자동화할 수 있다. 
-
-  👉 요즘은 jcenter을 더 많이 사용하지만, 프로젝트에서는 둘 다 등록해서 사용할 것이다.
-
-* dependencies
-  * **lombok**
-    🙋‍♀️ 추가하는 방법 ?
-    **step 1 )** `build.gradle`의 `dependencies`에 `compile('org.projectlombok:lombok')` 추가
-    **step 2 )** `Setting > Build > Compiler > Annotation Processros` 에서 `Enable annotation processing` 체크를 통해 
-    		해당 프로젝트에서 롬복을 사용할 수 있도록 해줘야 한다. (롬복은 프로젝트마다 설정해야 한다 ! ! !)
-
-
 
 
 
@@ -423,14 +532,20 @@ Hibernate와 Spring Data JPA 쓰는 것 사이에는 큰 차이가 없다
 
 
 
-1) 구현체 교체의 용이성
+**1) 구현체 교체의 용이성**
 
 ​		Hibernate 외에 다른 구현체로 쉽게 교체하기 위함
 
-2) 저장소 교체의 용이성
+**2) 저장소 교체의 용이성**
 
 ​        RDBMS 외에 다른 저장소로 쉽게 교체하기 위함
 
 ​		만약, NoSQL인 MongoDB로 교체가 필요하다면 Spring Data MongoDB로 의존성만 교체하면 된다.
 
 👉 Spring Data 의 하위 프로젝트들은 기본적인 CRUD의 인터페이스가 같고 1)2)와 같은 장점들로 인해 Spring Data JPA를 권장한다.
+
+
+
+
+
+<br>
