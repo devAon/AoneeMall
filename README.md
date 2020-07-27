@@ -389,6 +389,12 @@ public class Application {
 
 ### 📝 TDD 작성
 
+
+
+> Controller TDD
+
+
+
 * **@RunWith(SpringRunner.class)**
 
   : 스프링 부트 테스트와 JUnit 사이에 연결자 역할
@@ -437,20 +443,6 @@ public class Application {
 
   Controller에서 리턴하는 "hello"와 내용이 일치하는지 검증한다. 
 
-* **assertThat**
-
-  : `org.assertj.core.api.Assertions.assertThat` assertj의 테스트 검증 라이브러리의 검증 메소드
-
-  검증하고 싶은 대상을 메소드 인자로 받는다
-
-  메소드 체이닝이 지원되어 isEqualTo와 같이 메소드를 이어서 사용할 수 있다.
-
-* **isEqualTo**
-
-  : assertj의 동등 비교 메소드
-
-  assertThat에 있는 값과 isEqualTo의 값을 비교해서 같을 때만 성공
-
 * **param**
 
   : API 테스트할 때 사용될 요청 파라미터를 설정
@@ -466,6 +458,60 @@ public class Application {
   $를 기준으로 필드명 명시
 
   ​	ex) $.amount
+
+
+
+> DTO TDD
+
+
+
+* **assertThat**
+
+  : `org.assertj.core.api.Assertions.assertThat` assertj의 테스트 검증 라이브러리의 검증 메소드
+
+  검증하고 싶은 대상을 메소드 인자로 받는다
+
+  메소드 체이닝이 지원되어 isEqualTo와 같이 메소드를 이어서 사용할 수 있다.
+
+* **isEqualTo**
+
+  : assertj의 동등 비교 메소드
+
+  assertThat에 있는 값과 isEqualTo의 값을 비교해서 같을 때만 성공
+
+
+
+> Repository TDD
+
+
+
+* **@RunWith(SpringRunner.class)**
+
+* **@SpringBootTest**
+
+  : H2 데이터베이스를 자동으로 실행해준다.
+
+* **@After**
+
+  : Junit 에서 단위 테스트가 끝날 때마다 수행되는 메소도를 지정
+
+  🙋‍♀️ 언제 사용해 ?
+
+  보통, 배포 전, 전체 테스트 수행 시, 테스트간 데이터 침범을 막기 위해 사용한다.
+
+  여러 테스트가 동시에 수행되면 테스트용 DB인 H2에 데이터가 그대로 남아 있어 다음 테스트 실행 시, 테스트가 실패할 수 있기 때문이다.
+
+* **postRepository.save**
+
+  : 테이블 posts에 insert/update 쿼리를 실행한다.
+
+  id 값이 있다면 update, 없다면 insert 쿼리가 실행된다.
+
+* **postRepository.findAll**
+  
+  : 테이블 posts에 있는 모든 데이터를 조회해오는 메소드
+
+
 
 <br>
 
