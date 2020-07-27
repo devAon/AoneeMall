@@ -4,6 +4,8 @@
 
 <br>
 
+
+
 ## ⚙ 프로젝트 개발환경
 프로젝트 개발 환경은 다음과 같다.
 
@@ -21,10 +23,173 @@ Gradle 4.10.2
 
 ​		인텔리제이에서 `alt+F12` 눌러 👉  터미널에서 `gradlew wrapper --gradle-version 4.10.2` 명령어 실행
 
+
+
+
+
 <br>
 
 
+
+
+
+
+
+## 🧶 build.gradle
+```
+buildscript {
+    ext {
+        springBootVersion = '2.1.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.devAon'
+version '1.0.4-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('com.h2database:h2')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+```
+
+ 
+
+* **ext** 
+
+  : build.gradle에서 사용하는 전역변수를 설정한다는 의미
+
+* **spring-boot-gradle-plugin:${springBootVersion}**
+
+  : springBootVersion = '2.1.9.RELEASE' 를 의존성으로 받겠다는 의미
+
+* **repositories**
+
+  : 각종 의존성 (라이브러리)들을 어떤 원격 저장소에 받을지 정한다
+
+  * **mavenCentral()**
+
+    : 기본적으로 많이 사용. 
+
+      하지만 라이브러리 업로드를 위해 정말 많은 과정과 설정이 필요해서 힘듬
+
+  * **jcenter()**
+
+    : 라이브러리 업로드 문제점 개선해서 간단하게 해줌
+
+    jcenter에 라이브러리를 업로드하면 mavenCentral에도 업로드될 수 있도록 자동화할 수 있다. 
+
+  👉 요즘은 jcenter을 더 많이 사용하지만, 프로젝트에서는 둘 다 등록해서 사용할 것이다.
+
+* **dependencies**
+
+  * **lombok**
+    🙋‍♀️ 추가하는 방법 ?   
+    **step 1 )** `build.gradle`의 `dependencies`에 `compile('org.projectlombok:lombok')` 추가   
+    **step 2 )** `Setting > Build > Compiler > Annotation Processros` 에서 `Enable annotation processing` 체크를 통해   
+    		해당 프로젝트에서 롬복을 사용할 수 있도록 해줘야 한다. (롬복은 프로젝트마다 설정해야 한다 ! ! !)
+
+  * **spring-boot-starter-jpa**
+    스프링 부트용 Spring Data Jpa 추상화 라이브러리
+
+    스프링 부트 버전에 맞춰 자동으로 JPA 관련 라이브러리들의 버전을 관리해준다
+    
+  * **h2**
+  
+    인메모리 RDBMS
+  
+    별도의 설치 없이 프로젝트 의존성만으로 관리할 수 있다
+  
+    메모리에서 실행되기 때문에 애플리케이션을 재시작할 때마다 초기화된다는 점을 이용하여 테스트 용도로 많이 사용된다
+  
+    AoneeMAll 프로젝트에서는 JPA의 테스트, 로컬 환경에서의 구동에서 사용할 예정 !
+
+
+
+
+
+
+
+<br>
+
+
+
+## 🔗 패키지 구조
+
+### src-main-java
+
+* **web** : 컨트롤러와 관련된 클래스
+
+* **domain** : 도메인 (소프트웨어에 대한 요구사항 or 문제영역)
+
+  * **Posts** 
+
+    : 도메인 클래스
+
+  * **PostsRepository** 
+
+    : Posts 클래스로 DB를 접근하게 해줄 JpaRepository  
+
+    MyBatis 등에서 Dao라고 불리는 DB Layer 접근자
+
+    JPA에서는 Repository라고 부르며 인터페이스로 생성한다.
+
+    JpaRepository<Entity 클래스, PK타입> 을 상송하면 기본적인 CRUD 메소드가 자동으로 생성된다. ex) JpaRepository<Posts, Long>
+
+    ✍ **주의** ✍    
+
+    Entity 클래스와 기본 Repository는 함께 위치해야 제대로된 역할을 할 수 있다.
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+<br>
+
+
+
 ## 📌 feature-1 : 프로젝트 생성
+
+> build.gralde 의 코드의 역할 및 의존성 추가 방법을 스스로 해보자 !
 
 
 
@@ -79,43 +244,6 @@ dependencies {
 ```
 
    👉 프로젝트의 플러그인 의존성 관리를 위한 설정
-
-   
-
-* **ext** 
-
-  : build.gradle에서 사용하는 전역변수를 설정한다는 의미
-
-* **spring-boot-gradle-plugin:${springBootVersion}**
-
-  : springBootVersion = '2.1.9.RELEASE' 를 의존성으로 받겠다는 의미
-  
-* **repositories**
-
-  : 각종 의존성 (라이브러리)들을 어떤 원격 저장소에 받을지 정한다
-
-  * **mavenCentral()**
-
-    : 기본적으로 많이 사용. 
-
-      하지만 라이브러리 업로드를 위해 정말 많은 과정과 설정이 필요해서 힘듬
-
-  * **jcenter()**
-
-    : 라이브러리 업로드 문제점 개선해서 간단하게 해줌
-
-    jcenter에 라이브러리를 업로드하면 mavenCentral에도 업로드될 수 있도록 자동화할 수 있다. 
-
-  👉 요즘은 jcenter을 더 많이 사용하지만, 프로젝트에서는 둘 다 등록해서 사용할 것이다.
-
-* dependencies
-  * **lombok**
-    🙋‍♀️ 추가하는 방법 ?
-    **step 1 )** `build.gradle`의 `dependencies`에 `compile('org.projectlombok:lombok')` 추가
-    **step 2 )** `Setting > Build > Compiler > Annotation Processros` 에서 `Enable annotation processing` 체크를 통해 
-    		해당 프로젝트에서 롬복을 사용할 수 있도록 해줘야 한다. (롬복은 프로젝트마다 설정해야 한다 ! ! !)
-
-
 
 
 
@@ -261,6 +389,12 @@ public class Application {
 
 ### 📝 TDD 작성
 
+
+
+> Controller TDD
+
+
+
 * **@RunWith(SpringRunner.class)**
 
   : 스프링 부트 테스트와 JUnit 사이에 연결자 역할
@@ -309,20 +443,6 @@ public class Application {
 
   Controller에서 리턴하는 "hello"와 내용이 일치하는지 검증한다. 
 
-* **assertThat**
-
-  : `org.assertj.core.api.Assertions.assertThat` assertj의 테스트 검증 라이브러리의 검증 메소드
-
-  검증하고 싶은 대상을 메소드 인자로 받는다
-
-  메소드 체이닝이 지원되어 isEqualTo와 같이 메소드를 이어서 사용할 수 있다.
-
-* **isEqualTo**
-
-  : assertj의 동등 비교 메소드
-
-  assertThat에 있는 값과 isEqualTo의 값을 비교해서 같을 때만 성공
-
 * **param**
 
   : API 테스트할 때 사용될 요청 파라미터를 설정
@@ -339,18 +459,263 @@ public class Application {
 
   ​	ex) $.amount
 
+
+
+> DTO TDD
+
+
+
+* **assertThat**
+
+  : `org.assertj.core.api.Assertions.assertThat` assertj의 테스트 검증 라이브러리의 검증 메소드
+
+  검증하고 싶은 대상을 메소드 인자로 받는다
+
+  메소드 체이닝이 지원되어 isEqualTo와 같이 메소드를 이어서 사용할 수 있다.
+
+* **isEqualTo**
+
+  : assertj의 동등 비교 메소드
+
+  assertThat에 있는 값과 isEqualTo의 값을 비교해서 같을 때만 성공
+
+
+
+> Repository TDD
+
+
+
+* **@RunWith(SpringRunner.class)**
+
+* **@SpringBootTest**
+
+  : H2 데이터베이스를 자동으로 실행해준다.
+
+* **@After**
+
+  : Junit 에서 단위 테스트가 끝날 때마다 수행되는 메소도를 지정
+
+  🙋‍♀️ 언제 사용해 ?
+
+  보통, 배포 전, 전체 테스트 수행 시, 테스트간 데이터 침범을 막기 위해 사용한다.
+
+  여러 테스트가 동시에 수행되면 테스트용 DB인 H2에 데이터가 그대로 남아 있어 다음 테스트 실행 시, 테스트가 실패할 수 있기 때문이다.
+
+* **postRepository.save**
+
+  : 테이블 posts에 insert/update 쿼리를 실행한다.
+
+  id 값이 있다면 update, 없다면 insert 쿼리가 실행된다.
+
+* **postRepository.findAll**
+  
+  : 테이블 posts에 있는 모든 데이터를 조회해오는 메소드
+
+
+
 <br>
 
 
 
 ### 📝 lombok 사용
 
-* @Getter
+* **@Getter**
 
   선언된 모든 필드의 get 메소드를 생성해준다
 
-* @RequireArgsConstructor
+* **@RequireArgsConstructor**
 
   선언된 모든 final 필드가 포함된 생성자를 생성해줌
 
   final이 없는 필드는 생성자에 포함되지 않는다.
+  
+* **@NoArgsConstructor**
+
+  : 기본 생성자 자동 추가
+
+  ex)
+
+  public Posts() {} 와 같은 효과
+
+* **@Builder**
+
+  : 해당 클래스의 빌더 패턴 클래스를 생성
+
+  생성자 상단에 선언 시, 생성자에 포함된 필드만 빌더에 포함
+
+👉 서비스 초기 구축 단계에서 빈번하게 테이블 설계가 변경되는데, 
+
+​		롬복의 어노테이션들은 코드 변경량을 최소화시켜 주기 때문에 적극적으로 사용한다 !
+
+
+
+
+
+<br><br><br>
+
+
+
+## 📌 feature-8 : JPA
+
+### 📝 JPA란 ?
+
+객체지향적으로 프로그래밍을 하고, JPA가 이를 RDBMS에 맞게 SQL을 대신 생성해서 실행한다.   
+
+즉, JPA는 중간에서 패러다임을 일치시켜주는 기술이다.   
+
+
+
+🙋‍♀️ **무슨 소리냐구 ?**    
+
+RDBMS와 객체지향 프로그래밍 언어의 패러다임은 서로 달라 문제가 발생한다. (RDBMS에 없는 상속의 개념도 해결해줌 !)   
+
+그런데! ! !  JPA가 이를 해결해준다.  ~~WOW~~
+
+🐥 **참고**
+
+`RDBMS 패러다임 `: 어떻게 데이터를 저장할지 초점이 맞춰진 기술   
+
+`객체지향 프로그래밍 언어 패러다임` : 객체는 기능과 속성을 한 곳에 관리하는 기술   
+
+
+
+<br>
+
+
+
+### 📝 Spring Data JPA란 ?
+
+JPA : 인터페이스로서 자바 표준명세서
+
+인터페이스인 JPA를 사용하기 위해서는 구현체가 필요하다.
+
+대표적으로 Hibernate, Eclipse, Link등이 있다.   
+
+   
+
+
+
+하지만 Spring에서 JPA를 사용할 때는 이 구현체를 직접 다루지 않는다.
+
+Spring Data JPA라는 모듈을 이용하여 JPA 기술을 다룬다.
+
+`JPA 👈 Hibernate  👈 Spring Data JPA`
+
+Hibernate와 Spring Data JPA 쓰는 것 사이에는 큰 차이가 없다   
+
+   
+
+**🙋‍♀️ 그러나 Spring Data JPA 가 등장한 이유는 ?** 
+
+
+
+> 스프링 진영에서 개발함
+
+
+
+**1) 구현체 교체의 용이성**
+
+​		Hibernate 외에 다른 구현체로 쉽게 교체하기 위함
+
+**2) 저장소 교체의 용이성**
+
+​        RDBMS 외에 다른 저장소로 쉽게 교체하기 위함
+
+​		만약, NoSQL인 MongoDB로 교체가 필요하다면 Spring Data MongoDB로 의존성만 교체하면 된다.
+
+👉 Spring Data 의 하위 프로젝트들은 기본적인 CRUD의 인터페이스가 같고 1)2)와 같은 장점들로 인해 Spring Data JPA를 권장한다.
+
+
+
+
+
+<br>
+
+
+
+ ### 📝 JPA 어노테이션
+
+* **@Entity**
+
+  : 테이블과 링크될 클래스임을 나타낸다.
+
+  기본 값으로 클래스의 카멜케이스 이름을 언더스코어 네이밍 (_) 으로 테이블 이름을 매칭한다.
+
+  ex ) SalesManager.java -> sales_manager table
+
+* **@ Id**
+
+  해당 테이블의 PK필드를 나타낸다
+
+* **@GeneratedValue**
+
+  : PK의 생성 규칙을 나타낸다
+
+  스프링 부트 2.0에서는 GenerationType.IDENTITY 옵션을 추가해야만 auto_increment가 된다.
+
+* **@Column**
+
+  : 테이블 칼럼을 나타내며 굳이 선언하지 않더라도 해당 클래스의 필드는 모두 칼럼이 된다.
+
+  🙋‍♀️ 그런데 사용하는 이유는 ?    
+
+  기본값 외에 추가로 변경이 필요한 옵션이 있으면 사용한다.
+
+  ex)
+
+  문자열의 기본값인 VARCHAR(255) 에서 사이즈를 500으로 늘리거나,
+
+  TEXT로 타입을 변경하고 싶은 경우에 사용됨.
+
+
+
+🐥 **참고**
+
+ Entity 클래스에서는 절대 Setter 메소드를 만들지 않는다 ! ! 
+
+​	🙋‍♀️ **왜 ?** 
+
+​	해당 클래스의 인스턴스 값들이 언제 어디서 변해야하는지 코드상으로 명확하게 구분할 수 없어, 차후 기능 변경 시 정말 복잡해지기 때 ! 문 !
+
+  	대신, 해당 필드의 값 변경이 필요하면 명확히 그 목적과 의도를 나타낼 수 있는 메소드를 추가해야만 한다.
+
+ex)
+
+❌ 잘못된 사용 방법
+
+```
+public class Order{
+	public void setStatus(boolean status){
+		this.status = status;
+	}
+}
+public void 주문_취소event(){
+	order.setStatus(false);
+}
+```
+
+
+
+⭕ 올바른 사용 방법
+
+```
+public class Order{
+	public void cancelOrder(){
+		this.status = false;
+	}
+}
+public void 주문_취소event(){
+	order.cancelOrder();
+}
+```
+
+
+
+🙋‍♀️ Setter가 없는 상황에서 값을 채워 DB에 넣는 방법은 ? 
+
+생성자를 통해 최종값을 채운 후 DB에 삽입 !
+
+값 변경이 필요한 경우 해당 이벤트에 맞는 public 메소드를 호출하여 변경하는 것을 전제로 한다.
+
+
+
