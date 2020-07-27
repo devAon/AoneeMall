@@ -141,10 +141,29 @@ dependencies {
 
 ### src-main-java
 
-* web : 컨트롤러와 관련된 클래스
-* domain : 도메인 (소프트웨어에 대한 요구사항 or 문제영역)
+* **web** : 컨트롤러와 관련된 클래스
 
+* **domain** : 도메인 (소프트웨어에 대한 요구사항 or 문제영역)
 
+  * **Posts** 
+
+    : 도메인 클래스
+
+  * **PostsRepository** 
+
+    : Posts 클래스로 DB를 접근하게 해줄 JpaRepository  
+
+    MyBatis 등에서 Dao라고 불리는 DB Layer 접근자
+
+    JPA에서는 Repository라고 부르며 인터페이스로 생성한다.
+
+    JpaRepository<Entity 클래스, PK타입> 을 상송하면 기본적인 CRUD 메소드가 자동으로 생성된다. ex) JpaRepository<Posts, Long>
+
+    ✍ **주의** ✍    
+
+    Entity 클래스와 기본 Repository는 함께 위치해야 제대로된 역할을 할 수 있다.
+
+    
 
 
 
@@ -454,17 +473,33 @@ public class Application {
 
 ### 📝 lombok 사용
 
-* @Getter
+* **@Getter**
 
   선언된 모든 필드의 get 메소드를 생성해준다
 
-* @RequireArgsConstructor
+* **@RequireArgsConstructor**
 
   선언된 모든 final 필드가 포함된 생성자를 생성해줌
 
   final이 없는 필드는 생성자에 포함되지 않는다.
+  
+* **@NoArgsConstructor**
 
+  : 기본 생성자 자동 추가
 
+  ex)
+
+  public Posts() {} 와 같은 효과
+
+* **@Builder**
+
+  : 해당 클래스의 빌더 패턴 클래스를 생성
+
+  생성자 상단에 선언 시, 생성자에 포함된 필드만 빌더에 포함
+
+👉 서비스 초기 구축 단계에서 빈번하게 테이블 설계가 변경되는데, 
+
+​		롬복의 어노테이션들은 코드 변경량을 최소화시켜 주기 때문에 적극적으로 사용한다 !
 
 
 
@@ -490,8 +525,6 @@ RDBMS와 객체지향 프로그래밍 언어의 패러다임은 서로 달라 �
 
 그런데! ! !  JPA가 이를 해결해준다.  ~~WOW~~
 
-
-
 🐥 **참고**
 
 `RDBMS 패러다임 `: 어떻게 데이터를 저장할지 초점이 맞춰진 기술   
@@ -501,6 +534,8 @@ RDBMS와 객체지향 프로그래밍 언어의 패러다임은 서로 달라 �
 
 
 <br>
+
+
 
 ### 📝 Spring Data JPA란 ?
 
@@ -549,3 +584,92 @@ Hibernate와 Spring Data JPA 쓰는 것 사이에는 큰 차이가 없다
 
 
 <br>
+
+
+
+ ### 📝 JPA 어노테이션
+
+* **@Entity**
+
+  : 테이블과 링크될 클래스임을 나타낸다.
+
+  기본 값으로 클래스의 카멜케이스 이름을 언더스코어 네이밍 (_) 으로 테이블 이름을 매칭한다.
+
+  ex ) SalesManager.java -> sales_manager table
+
+* **@ Id**
+
+  해당 테이블의 PK필드를 나타낸다
+
+* **@GeneratedValue**
+
+  : PK의 생성 규칙을 나타낸다
+
+  스프링 부트 2.0에서는 GenerationType.IDENTITY 옵션을 추가해야만 auto_increment가 된다.
+
+* **@Column**
+
+  : 테이블 칼럼을 나타내며 굳이 선언하지 않더라도 해당 클래스의 필드는 모두 칼럼이 된다.
+
+  🙋‍♀️ 그런데 사용하는 이유는 ?    
+
+  기본값 외에 추가로 변경이 필요한 옵션이 있으면 사용한다.
+
+  ex)
+
+  문자열의 기본값인 VARCHAR(255) 에서 사이즈를 500으로 늘리거나,
+
+  TEXT로 타입을 변경하고 싶은 경우에 사용됨.
+
+
+
+🐥 **참고**
+
+ Entity 클래스에서는 절대 Setter 메소드를 만들지 않는다 ! ! 
+
+​	🙋‍♀️ **왜 ?** 
+
+​	해당 클래스의 인스턴스 값들이 언제 어디서 변해야하는지 코드상으로 명확하게 구분할 수 없어, 차후 기능 변경 시 정말 복잡해지기 때 ! 문 !
+
+  	대신, 해당 필드의 값 변경이 필요하면 명확히 그 목적과 의도를 나타낼 수 있는 메소드를 추가해야만 한다.
+
+ex)
+
+❌ 잘못된 사용 방법
+
+```
+public class Order{
+	public void setStatus(boolean status){
+		this.status = status;
+	}
+}
+public void 주문_취소event(){
+	order.setStatus(false);
+}
+```
+
+
+
+⭕ 올바른 사용 방법
+
+```
+public class Order{
+	public void cancelOrder(){
+		this.status = false;
+	}
+}
+public void 주문_취소event(){
+	order.cancelOrder();
+}
+```
+
+
+
+🙋‍♀️ Setter가 없는 상황에서 값을 채워 DB에 넣는 방법은 ? 
+
+생성자를 통해 최종값을 채운 후 DB에 삽입 !
+
+값 변경이 필요한 경우 해당 이벤트에 맞는 public 메소드를 호출하여 변경하는 것을 전제로 한다.
+
+
+
