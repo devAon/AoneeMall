@@ -748,9 +748,15 @@ public void 주문_취소event(){
   Hibernate: create table posts (id bigint not null auto_increment, author varchar(255), content TEXT not null, title varchar(500) not null, primary key (id)) engine=InnoDB
   ```
 
-  
+* **spring.h2.console.enabled=true**
 
+  main 실행 후,
 
+  http://localhost:8080/h2-console 로 접속
+
+  JDBC URL : jdbc:h2:mem:testdb
+
+  connect 후 테이블 조회 가능
 
 
 
@@ -860,9 +866,11 @@ API를 만들기 위해 총 3개의 클래스가 필요하다
 
 <br>
 
+<br>
 
 
-✏ **등록 POST**
+
+#### ✏ **등록 POST**
 
 **web - PostsApiController**
 
@@ -881,7 +889,7 @@ public class PostsApiController {
 
 
 
-
+<br>
 
 
 
@@ -906,7 +914,7 @@ public class PostsService {
 
 
 
-
+<br>
 
 
 
@@ -946,6 +954,10 @@ Entity 클래스는 DB와 맞닿은 핵심 클래스로 Entity 클래스를 기�
 즉, 화면변경을 사소한 기능 변경인데, 이를 위해 테이블과 연결된 Entity 클래스를 변경하는 것은 너무 큰 변경이다.
 
 따라서, View Layer와 DB Layer의 역할 분리를 철저하게 하는 것이 좋다.
+
+
+
+<br>
 
 
 
@@ -1001,6 +1013,316 @@ public class PostsApiControllerTest {
   JPA 기능까지 한 번에 테스트할 때 사용
 
   (**@WebMvcTest**의 경우, JPA기능이 작동하지 않으며, controller와 ControllerAdvice 등 외부 연동과 관련된 부분만 활성화된다! 그러니 여기서는 JPA를 테스트할 것이기 때문에 사용 안함!)
+
+
+
+<br><br>
+
+
+
+#### ✏ **수정 UPDATE**
+
+**web - PostsApiController**
+
+```
+@RequiredArgsConstructor
+@RestController
+public class PostsApiController {
+    private final PostsService postsService;
+
+    ...
+    
+    @PutMapping("/api/v1/posts/{id}")
+    public Long update(@PathVariable Long id, @RequestBody PostsUpdateRequestDto requestDto){
+        return postsService.update(id, requestDto);
+    }
+}
+```
+
+
+
+<br>
+
+
+
+**service - PostsService**
+
+```
+@RequiredArgsConstructor
+@Service
+public class PostsService {
+    private final PostsRepository postsRepository;
+	
+	...
+    
+    @Transactional
+    public Long update(Long id, PostsUpdateRequestDto requestDto) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(()->
+                        new IllegalArgumentException("해당 게시글이 없습니다. id = "+ id));
+        posts.update(requestDto.getTitle(), requestDto.getContent());
+        return id;
+    }
+}
+```
+
+
+
+
+
+
+
+<br>
+
+
+
+**web.dto - PostsUpdateRequestDto**
+
+```
+@Getter
+@NoArgsConstructor
+public class PostsUpdateRequestDto {
+    private String title;
+    private String content;
+
+    @Builder
+    public PostsUpdateRequestDto(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
+}
+```
+
+
+
+
+
+
+
+<br>
+
+
+
+**domain - posts - Posts**
+
+```
+@Getter
+@NoArgsConstructor
+@Entity
+public class Posts {
+
+    ...
+    
+    public void update(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
+
+}
+```
+
+
+
+##### 🐥 더티체킹 
+
+**update 기능에서는 쿼리를 날리는 부분이 없다 ?! !?  ?!**
+
+엔티티를 영구 저장하는 환경인 **JPA의 영속성 컨텍스트** 때문에 가능 ! ~~WOW~~
+
+JPA의 엔티티 매니저가 활성화된 상태로 트랜잭션 안에서 **DB에서 데이터를 가져오면 이 데이터는 영속성 컨텍스트가 유지된 상태.**
+
+이 상태에서 해당 데이터의 값을 변경하면 **트랜잭션이 끝나는 시점에 해당 테이블에 변경분을 반영**한다. 즉, **Entity 객체의 값만 변경하면 별도로 Update 쿼리를 날릴 필요가 없다.** 이 개념을 더티 체킹이라고 한다. 
+
+
+
+<br>
+
+
+
+
+
+
+
+**test - web - PostsApiControllerTest**
+
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class PostsApiControllerTest {
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private PostsRepository postsRepository;
+
+    @After
+    public void tearDown() throws Exception{
+        postsRepository.deleteAll();
+    }
+
+    
+    ...
+    
+
+    @Test
+    public void Posts_수정된다() throws Exception{
+        //given
+        Posts savedPosts = postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        Long updateId = savedPosts.getId();
+        String title = "title2";
+        String content = "content2";
+
+        PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
+                .title(title)
+                .content(content)
+                .build();
+
+        String url = "http://localhost:" + port + "/api/v1/posts/" + updateId;
+
+        HttpEntity<PostsUpdateRequestDto> requestEntity  = new HttpEntity<>(requestDto);
+
+        //when
+        ResponseEntity<Long> responseEntity
+                = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+
+        List<Posts> all = postsRepository.findAll();
+        assertThat(all.get(0).getTitle()).isEqualTo(title);
+        assertThat(all.get(0).getContent()).isEqualTo(content);
+    }
+}
+
+```
+
+
+
+
+
+
+
+<br><br>
+
+
+
+#### ✏ **조회 GET**
+
+**web - PostsApiController**
+
+```
+@RequiredArgsConstructor
+@RestController
+public class PostsApiController {
+    private final PostsService postsService;
+
+    ...
+    
+    @GetMapping("/api/v1/posts/{id}")
+    public PostsResponseDto findById (@PathVariable Long id){
+        return postsService.findById(id);
+    }
+}
+
+```
+
+
+
+<br>
+
+
+
+**service - PostsService**
+
+```
+@RequiredArgsConstructor
+@Service
+public class PostsService {
+    private final PostsRepository postsRepository;
+
+    ...
+
+    @Transactional(readOnly = true)
+    public PostsResponseDto findById(Long id) {
+        Posts entity = postsRepository.findById(id)
+                .orElseThrow(()->
+                        new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+        return new PostsResponseDto(entity);
+    }
+}
+```
+
+
+
+
+
+
+
+<br>
+
+
+
+**web.dto - PostsResponseDto**
+
+```
+@Getter
+public class PostsResponseDto {
+    private Long id;
+    private String title;
+    private String content;
+    private String author;
+
+    public PostsResponseDto (Posts entity){
+        this.id = entity.getId();
+        this.title = entity.getTitle();
+        this.content = entity.getContent();
+        this.author = entity.getAuthor();
+    }
+}
+```
+
+
+
+
+
+<br>
+
+**조회하기**
+
+1. **application.properties**
+
+   spring.h2.console.enabled=true 추가
+
+2. **localhost:8080/h2-console**
+
+   JDBC URL :   jdbc:h2:mem:testdb
+
+   connect 
+
+3. **test 데이터 삽입**
+
+   ```
+   INSERT INTO POSTS(author, title, content) VALUES('aonee', 'title', 'content');
+   ```
+
+4. **API 조회**
+
+   http://localhost:8080/api/v1/posts/1
+
+   ```
+   {"id":1,"title":"title","content":"content","author":"aonee"}
+   ```
+
+   
 
 
 
