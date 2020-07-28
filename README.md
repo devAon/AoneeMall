@@ -508,7 +508,7 @@ public class Application {
 
 * **postRepository.findAll**
   
-  : 테이블 posts에 있는 모든 데이터 조회 메소드
+  : 테이블 posts에 있는 모든 데이터를 조회하는 메소드
 
 
 
