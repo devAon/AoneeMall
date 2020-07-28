@@ -756,5 +756,252 @@ public void 주문_취소event(){
 
 
 
+<br>
+
+
+
+ ### 📝Spring 웹 계층
+
+![](https://i.imgur.com/ZbszQve.png)
+
+
+
+* **Web Layer**
+
+  : 흔히 사용되는 컨트롤러(@Controller)와  JSP/Freemarker 등의 뷰 템플릿 영역
+
+  이외에도 필터(@Filter), 인터셉터, 컨트롤러 어드바이스(@ControllerAdvice)등 외부 요청과 응답에 대한 전반적인 영역
+
+* **Service Layer**
+
+  : @Service에 사용되는 서비스 영역
+
+  일반적으로 Controller와 Dao의 중간 영역에서 사용된다
+
+  @Transactional이 사용되어야 하는 영역
+
+  ✍ **주의** ✍    
+
+  "Service에서 비즈니스 로직을 처리해야한다." 는 오 ! 해 !  ~~정말?😵~~
+
+  👉 Service는 트랜잭션, 도메인 간 **순서 보장**의 역할만 한다 !
+
+* **Repository Layer**
+
+  : DB와 같이 데이터 저장소에 접근하는 영역
+
+   Dao(Data Access Object) 영역
+
+* **Dtos**
+
+  : 계층 간에 데이터 교환을 위한 객체
+
+  뷰 템플릿 엔진에서 사용될 객체나 Repository Layer에서 결과로 넘겨준 객체 등
+
+* **Domain Model**
+
+  : 도메인이라 불리는 개발 대상을 모든 사람이 동일한 관점에서 이해할 수 있고 공유할 수 있도록 단순화시킨 것
+
+  **ex)** 택시 앱의 배차, 탑승, 요금 등이 모두 도메인
+
+  @Entity가 사용된 영역 역시 도메인 모델이다.
+
+  다만, 무조건 DB 테이블과 관계까 있어야 하는 것은 아니다. VO처럼 값 객체들도 이 영역에 해당하기 때문 !
+
+**🙋‍♀️ 5가지 레이어 중 비즈니스 처리를 담당해야 할 곳은 ?** Domain
+
+
+
+
+
+
+
+<br>
+
+
+
+### 📝스프링에서 Bean을 주입받는 방식
+
+* **@Autowired**
+* **setter**
+* **생성자**
+
+🙋‍♀️ **이 중 가장 권장하는 방식은 ?**    
+
+생성자로 주입받는 방식 (@Autowired는 권장하지 않는다)
+
+롬복의 **@RequiredArgsConstructor**이 final이 선언된 모든 필드를 인자값으로 하는 생상자를 생성해줌
+
+🙋‍♀️ **왜 생성자를 직접 안 쓰고 롬복 어노테이션을 사용하나 ?**
+
+해당 클래스의 의존성 관계가 변경될 때마다    
+
+**생성자 코드를 계속해서 수정하는 번거로움 해결**하기 위함
+
+즉, 해당 컨트롤러에 새로운 서비스를 추가하거나, 기존 컴포넌트를 제거하는 등의 상황이 발생해도 생성자 코드는 전혀 손대지 않아도 된다. 편리하다 !
+
+
+
+
+
+
+
+
+
+ ### 📝API 만들기
+
+API를 만들기 위해 총 3개의 클래스가 필요하다
+
+* **Request 데이터를 받을 Dto**
+* **API 요청을 받을 Controller**
+* **트랜잭션, 도메인 기능 간의 순서를 보장하는 Service**
+
+
+
+<br>
+
+
+
+✏ **등록 POST**
+
+**web - PostsApiController**
+
+```
+@RequiredArgsConstructor
+@RestController
+public class PostsApiController {
+    private final PostsService postsService;
+
+    @PostMapping("/api/v1/posts")
+    public Long save(@RequestBody PostsSaveRequestDto requestDto){
+        return postsService.save(requestDto);
+    }
+}
+```
+
+
+
+
+
+
+
+**service - PostsService**
+
+```
+@RequiredArgsConstructor
+@Service
+public class PostsService {
+    private final PostsRepository postsRepository;
+
+    @Transactional
+    public Long save(PostsSaveRequestDto requestDto) {
+        return postsRepository.save(requestDto.toEntity()).getId();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+**web.dto - PostsSaveRequestDto**
+
+```
+@Getter
+@NoArgsConstructor
+public class PostsSaveRequestDto {
+    private String title;
+    private String content;
+    private String author;
+
+    @Builder
+    public PostsSaveRequestDto(String title, String content, String author){
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
+
+    public Posts toEntity(){
+        return Posts.builder()
+                .title(title)
+                .content(content)
+                .author(author)
+                .build();
+    }
+}
+```
+
+**🙋‍♀️ Entity 클래스와 거의 유사한 형태임에도 Dto클래스를 추가로 생성하는 이유는 ?**
+
+**Request와 Response용 Dto**는 **View를 위한 클래스**이기 때문에 **자주 변경**된다.
+
+Entity 클래스는 DB와 맞닿은 핵심 클래스로 Entity 클래스를 기준으로 테이블이 생성되고, 스키마가 변경된다. 
+
+즉, 화면변경을 사소한 기능 변경인데, 이를 위해 테이블과 연결된 Entity 클래스를 변경하는 것은 너무 큰 변경이다.
+
+따라서, View Layer와 DB Layer의 역할 분리를 철저하게 하는 것이 좋다.
+
+
+
+**test - web - PostsApiControllerTest**
+
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class PostsApiControllerTest {
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private PostsRepository postsRepository;
+
+    @After
+    public void tearDown() throws Exception{
+        postsRepository.deleteAll();
+    }
+
+    @Test
+    public void Posts_등록된다() throws Exception{
+        //given
+        String title = "title";
+        String content = "content";
+        PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
+                .title(title)
+                .content(content)
+                .author("author")
+                .build();
+
+        String url = "http://localhost:" + port + "/api/v1/posts";
+
+        //when
+        ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, requestDto, Long.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+
+        List<Posts> all = postsRepository.findAll();
+        assertThat(all.get(0).getTitle()).isEqualTo(title);
+        assertThat(all.get(0).getContent()).isEqualTo(content);
+    }
+}
+```
+
+* **@SpringBootTest, TestRestTemplate** 
+
+  JPA 기능까지 한 번에 테스트할 때 사용
+
+  (**@WebMvcTest**의 경우, JPA기능이 작동하지 않으며, controller와 ControllerAdvice 등 외부 연동과 관련된 부분만 활성화된다! 그러니 여기서는 JPA를 테스트할 것이기 때문에 사용 안함!)
+
+
 
 
