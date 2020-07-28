@@ -850,7 +850,7 @@ public void 주문_취소event(){
 
 
 
-
+<br>
 
 
 
@@ -1379,6 +1379,126 @@ public class PostsService {
 }
 
 ```
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+ ### 📝JPA Auditing으로 생성시간/수정시간 자동화
+
+Entity에 생성시간과 수정시간은 차후 유지보수에 있어 굉장히 중요한 정보이기 때문에 해당 내용을 포함한다.
+
+매번 DB에 삽입/갱신 전 날짜 데이터를 등록/수정하는 코드를 추가하지 않도록 JPA  Auditing 사용할 것이다.
+
+
+
+**domain - BaseTimeEntity**
+
+```
+@Getter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class BaseTimeEntity {
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
+}
+
+```
+
+* **@MappedSuperclass**
+
+  : JPA Entity 클래스들이 BaseTimeEntity를 상속할 경우, 필드들(createdDate, modifiedDate)도 칼럼으로 인식하도록 한다
+
+* **@EntityListeners(AuditingEntityListener.class)**
+
+  : BaseTimeEntity 클래스에 Auditing 기능을 포함시킨다.
+
+* **@CreatedDate**
+
+  : Entity가 생성되어 저장될 때 시간이 자동 저장된다.
+
+* **@LastModifiedDate**
+
+  : 조회한 Entity의 값을 변경할 때 시간이 자동 저장된다.
+
+
+
+**domain - posts - Posts**
+
+```
+public class Posts extends BaseTimeEntity 
+```
+
+BaseTimeEntity  상속받기
+
+
+
+
+
+**Application**
+
+```
+@EnableJpaAuditing //JPA Auditing 활성화
+```
+
+@EnableJpaAuditing 롬복 어노테이션을 붙여주어 JPA Auditing을 활성화 시킨다.
+
+
+
+**test - domain - posts - PostRepositoryTest**
+
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class PostRepositoryTest {
+    @Autowired
+    PostsRepository postsRepository;
+
+    @After
+    public void cleanup(){
+        postsRepository.deleteAll();
+    }
+    
+...
+
+    @Test
+    public void BaseTimeEntity_등록(){
+       //given
+        LocalDateTime now = LocalDateTime.of(2020,7,28,0,0,0);
+        postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        //when
+        List<Posts> postsList = postsRepository.findAll();
+
+        //then
+        Posts posts = postsList.get(0);
+
+        System.out.println(">>>>>>>>>> createDate = " + posts.getCreatedDate()
+        + ", modifiedDate = " + posts.getModifiedDate());
+
+        assertThat(posts.getCreatedDate()).isAfter(now);
+        assertThat(posts.getModifiedDate()).isAfter(now);
+
+    }
+}
+```
+
+
 
 
 
