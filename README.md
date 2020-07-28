@@ -1327,3 +1327,58 @@ public class PostsResponseDto {
 
 
 
+
+<br><br>
+
+
+
+#### ✏ **삭제 DELETE**
+
+**web - PostsApiController**
+
+```
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/posts")
+public class PostsApiController {
+    private final PostsService postsService;
+
+    ...
+
+    @DeleteMapping("/{id}")
+    public Long delete(@PathVariable Long id){
+        postsService.delete(id);
+        return id;
+    }
+}
+```
+
+
+
+<br>
+
+
+
+**service - PostsService**
+
+```
+@RequiredArgsConstructor
+@Service
+public class PostsService {
+    private final PostsRepository postsRepository;
+
+    ...
+    
+    public void delete(Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(()->
+                        new IllegalArgumentException("해당 게시글이 없습니다. id = "+ id));
+
+        postsRepository.delete(posts);
+    }
+}
+
+```
+
+
+
