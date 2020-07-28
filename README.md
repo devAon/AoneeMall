@@ -70,6 +70,7 @@ dependencies {
     compile('org.projectlombok:lombok')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('com.h2database:h2')
+    compile('org.springframework.boot:spring-boot-starter-mustache')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
@@ -1500,5 +1501,172 @@ public class PostRepositoryTest {
 
 
 
+<br><br><br>
 
 
+
+## 📌 feature-11 : 머스테치
+
+### 📝머스테치란 ? 
+
+JSP와 같이 HTML을 만들어주는 템플릿 엔진
+
+
+
+🐥 **참고**
+
+* **템플릿 엔진?**
+
+  지정된 템플릿 데이터를 이용해 HTML을 생성하는 템플릿 엔진
+
+* **서버 템플릿 엔진**
+
+  JSP, Freemarker
+
+  화면 생성 : 서버에서 Java 코드로 문자열을 만든 뒤 이 문자열을 HTML 로 변환하여 브라우저에 전달
+
+* **클라이언트 템플릿 엔진**
+
+  React, Vue
+
+  SPA(Single Page Application) 브라우저에서 화면을 생성한다. 즉, 서버에서 이미 코드가 벗어난 경우
+
+  서버에서는 Json or Xml 형식의 데이터만 전달하고 클라이언트에서 조립한다.
+
+  최근에는 React, Vue 와 같은 자바스크림트 프레임워크에서 서버 사이드 렌더링을 지원하긴 한다.
+
+
+
+### 📝머스테치 설치
+
+1. 
+
+`ctrl+shift+A` -> 'plugins' -> mustache 검색 후 설치
+
+
+
+2. 
+
+build.gradle에 추가
+
+```
+compile('org.springframework.boot:spring-boot-starter-mustache')
+```
+
+
+
+
+
+<br>
+
+
+
+### 📝머스테치로 화면 구성
+
+**IndexController**
+
+```
+@RequiredArgsConstructor
+@Controller
+public class IndexController {
+
+    private final PostsService postsService;
+
+    @GetMapping("/") //경로: 머스테치 스타터가 자동 지정해줌
+    public String index(Model model){
+        model.addAttribute("posts", postsService.findAllDesc());
+
+        return "index";
+    }
+
+    @GetMapping("/posts/save")
+    public String postsSave() {
+        return "posts-save";
+    }
+
+    @GetMapping("/posts/update/{id}")
+    public String postsUpdate(@PathVariable Long id, Model model) {
+        PostsResponseDto dto = postsService.findById(id);
+        model.addAttribute("post", dto);
+
+        return "posts-update";
+    }
+```
+
+경로: 머스테치 스타터가 자동 지정해줌
+
+src/main/resources/templates/index.mustache
+
+
+
+<br>
+
+**PostsRepository**
+
+```
+public interface PostsRepository extends JpaRepository<Posts, Long> {
+    @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
+    List<Posts> findAllDesc();
+}
+```
+
+메인화면에 전체 글 목록 조회 추가
+
+
+
+<br>
+
+
+
+**PostsService**
+
+```
+@RequiredArgsConstructor
+@Service
+public class PostsService {
+    private final PostsRepository postsRepository;
+
+    
+    ...
+    
+    @Transactional
+    public List<PostsListResponseDto> findAllDesc(){
+        return postsRepository.findAllDesc().stream()
+                .map(PostsListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+}
+```
+
+메인화면에 전체 글 목록 조회 추가
+
+
+
+<br>
+
+
+
+**PostsListResponseDto**
+
+```
+@Getter
+public class PostsListResponseDto {
+    private Long id;
+    private String title;
+    private String author;
+    private LocalDateTime modifiedDate;
+
+    public PostsListResponseDto(Posts entity){
+        this.id = entity.getId();
+        this.title = entity.getTitle();
+        this.author = entity.getAuthor();
+        this.modifiedDate = entity.getModifiedDate();
+    }
+}
+```
+
+메인화면에 전체 글 목록 조회 추가
+
+
+
+<br><br>
