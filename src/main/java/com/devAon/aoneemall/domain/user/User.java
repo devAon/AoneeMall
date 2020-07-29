@@ -17,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class User extends BaseTimeEntity {
-    //id, name, email, picture, role
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
