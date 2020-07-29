@@ -1,5 +1,6 @@
 package com.devAon.aoneemall.config.auth;
 
+import com.devAon.aoneemall.config.auth.dto.OAuthAttributes;
 import com.devAon.aoneemall.domain.user.User;
 import com.devAon.aoneemall.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;

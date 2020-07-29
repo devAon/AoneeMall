@@ -1,5 +1,6 @@
 package com.devAon.aoneemall.config.auth;
 
+import com.devAon.aoneemall.domain.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
