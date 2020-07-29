@@ -1,11 +1,14 @@
 package com.devAon.aoneemall.web;
 
 import com.devAon.aoneemall.service.PostsService;
+import com.devAon.aoneemall.web.dto.PostsListResponseDto;
 import com.devAon.aoneemall.web.dto.PostsResponseDto;
 import com.devAon.aoneemall.web.dto.PostsSaveRequestDto;
 import com.devAon.aoneemall.web.dto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by qwone4@gmail.com on 2020-07-28
@@ -38,5 +41,9 @@ public class PostsApiController {
     public Long delete(@PathVariable Long id){
         postsService.delete(id);
         return id;
+    }
+    @GetMapping("/list")
+    public List<PostsListResponseDto> findAll() {
+        return postsService.findAllDesc();
     }
 }
