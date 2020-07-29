@@ -2,7 +2,6 @@ package com.devAon.aoneemall;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
  * Created by qwone4@gmail.com on 2020-07-26

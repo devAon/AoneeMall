@@ -55,7 +55,7 @@ public class PostsService {
         postsRepository.delete(posts);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PostsListResponseDto> findAllDesc(){
         return postsRepository.findAllDesc().stream()
                 .map(PostsListResponseDto::new)
