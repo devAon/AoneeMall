@@ -1,5 +1,6 @@
 package com.devAon.aoneemall.web;
 
+import com.devAon.aoneemall.config.auth.LoginUser;
 import com.devAon.aoneemall.config.auth.dto.SessionUser;
 import com.devAon.aoneemall.service.PostsService;
 import com.devAon.aoneemall.web.dto.PostsResponseDto;
@@ -22,20 +23,16 @@ import javax.servlet.http.HttpSession;
 public class IndexController {
 
     private final PostsService postsService;
-    private final HttpSession httpSession;
 
-    @GetMapping("/") //경로: 머스테치 스타터가 자동 지정해줌
-    public String index(Model model){
+    @GetMapping("/")
+    public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
-
-        // 로그인 성공시 SessionUser에 저장
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
-
-        if (user != null){
+        if (user != null) {
             model.addAttribute("userName", user.getName());
         }
         return "index";
     }
+
     @GetMapping("/posts/save")
     public String postsSave() {
         return "posts-save";
