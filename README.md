@@ -875,7 +875,7 @@ API를 만들기 위해 총 3개의 클래스가 필요하다
 
 **web - PostsApiController**
 
-```
+```java
 @RequiredArgsConstructor
 @RestController
 public class PostsApiController {
@@ -896,7 +896,7 @@ public class PostsApiController {
 
 **service - PostsService**
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class PostsService {
@@ -921,7 +921,7 @@ public class PostsService {
 
 **web.dto - PostsSaveRequestDto**
 
-```
+```java
 @Getter
 @NoArgsConstructor
 public class PostsSaveRequestDto {
@@ -964,7 +964,7 @@ Entity 클래스는 DB와 맞닿은 핵심 클래스로 Entity 클래스를 기�
 
 **test - web - PostsApiControllerTest**
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostsApiControllerTest {
@@ -1025,7 +1025,7 @@ public class PostsApiControllerTest {
 
 **web - PostsApiController**
 
-```
+```java
 @RequiredArgsConstructor
 @RestController
 public class PostsApiController {
@@ -1048,7 +1048,7 @@ public class PostsApiController {
 
 **service - PostsService**
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class PostsService {
@@ -1079,7 +1079,7 @@ public class PostsService {
 
 **web.dto - PostsUpdateRequestDto**
 
-```
+```java
 @Getter
 @NoArgsConstructor
 public class PostsUpdateRequestDto {
@@ -1106,7 +1106,7 @@ public class PostsUpdateRequestDto {
 
 **domain - posts - Posts**
 
-```
+```java
 @Getter
 @NoArgsConstructor
 @Entity
@@ -1146,7 +1146,7 @@ JPA의 엔티티 매니저가 활성화된 상태로 트랜잭션 안에서 **DB
 
 **test - web - PostsApiControllerTest**
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostsApiControllerTest {
@@ -1220,7 +1220,7 @@ public class PostsApiControllerTest {
 
 **web - PostsApiController**
 
-```
+```java
 @RequiredArgsConstructor
 @RestController
 public class PostsApiController {
@@ -1244,7 +1244,7 @@ public class PostsApiController {
 
 **service - PostsService**
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class PostsService {
@@ -1274,7 +1274,7 @@ public class PostsService {
 
 **web.dto - PostsResponseDto**
 
-```
+```java
 @Getter
 public class PostsResponseDto {
     private Long id;
@@ -1337,7 +1337,7 @@ public class PostsResponseDto {
 
 **web - PostsApiController**
 
-```
+```java
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -1362,7 +1362,7 @@ public class PostsApiController {
 
 **service - PostsService**
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class PostsService {
@@ -1403,7 +1403,7 @@ Entity에 생성시간과 수정시간은 차후 유지보수에 있어 굉장�
 
 **domain - BaseTimeEntity**
 
-```
+```java
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -1459,7 +1459,7 @@ BaseTimeEntity  상속받기
 
 **test - domain - posts - PostRepositoryTest**
 
-```
+```java
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PostRepositoryTest {
@@ -1565,7 +1565,7 @@ compile('org.springframework.boot:spring-boot-starter-mustache')
 
 **IndexController**
 
-```
+```java
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
@@ -1603,7 +1603,7 @@ src/main/resources/templates/index.mustache
 
 **PostsRepository**
 
-```
+```java
 public interface PostsRepository extends JpaRepository<Posts, Long> {
     @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
     List<Posts> findAllDesc();
@@ -1620,7 +1620,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
 
 **PostsService**
 
-```
+```java
 @RequiredArgsConstructor
 @Service
 public class PostsService {
@@ -1648,7 +1648,7 @@ public class PostsService {
 
 **PostsListResponseDto**
 
-```
+```java
 @Getter
 public class PostsListResponseDto {
     private Long id;
@@ -1668,5 +1668,3 @@ public class PostsListResponseDto {
 메인화면에 전체 글 목록 조회 추가
 
 
-
-<br><br>
