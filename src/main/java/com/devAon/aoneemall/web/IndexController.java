@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * Created by qwone4@gmail.com on 2020-07-28
  * Blog : https://velog.io/@aonee
@@ -26,7 +28,6 @@ public class IndexController {
 
         return "index";
     }
-
     @GetMapping("/posts/save")
     public String postsSave() {
         return "posts-save";
