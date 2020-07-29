@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  * Github : http://github.com/devAon
  */
 
-@EnableJpaAuditing //JPA Auditing 활성화
 @SpringBootApplication
 public class Application {
     public static void main(String[] args){
