@@ -79,7 +79,6 @@ dependencies {
     testCompile("org.springframework.security:spring-security-test")
 }
 
-
 ```
 
  
@@ -1671,5 +1670,156 @@ public class PostsListResponseDto {
 ```
 
 메인화면에 전체 글 목록 조회 추가
+
+
+
+
+
+<br><br><br>
+
+
+
+## 📌 feature-11 : Oauth
+
+### 📝Google
+
+<img src="https://i.imgur.com/teywoLF.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+
+
+<br>
+
+
+
+<img src="https://i.imgur.com/MN9BScv.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+
+
+
+
+<br>
+
+
+
+
+
+<img src="https://i.imgur.com/qfUDML7.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+### 📝Naver
+
+<img src="https://i.imgur.com/teywoLF.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+<br>
+
+<img src="https://i.imgur.com/o1TMg5b.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+<br>
+
+<img src="https://i.imgur.com/qfUDML7.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+<br>
+
+
+
+<br>
+
+<br>
+
+
+
+
+
+### 📝 ISSUE
+
+<img src="https://i.imgur.com/isAts8i.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+👉 **Naver**는 개발중인 상태에서는 등록된 아이디로만 로그인 가능하다. 
+즉, 외부 사용자는 가입하지 못한다. ❌ ~~출시를 해야겠네🤔~~
+👉 **Google**은 개발자 이메일 외에도 로그인 가능하다.⭕
+
+
+
+
+
+<br>
+
+
+
+<br>
+
+<br>
+
+
+
+
+
+### 📝 구현
+
+
+
+> application-oauth.properties
+
+
+
+```
+# Google
+spring.security.oauth2.client.registration.google.client-id=
+spring.security.oauth2.client.registration.google.client-secret=
+spring.security.oauth2.client.registration.google.scope=profile,email
+
+# Naver
+# registration
+spring.security.oauth2.client.registration.naver.client-id=
+spring.security.oauth2.client.registration.naver.client-secret=
+spring.security.oauth2.client.registration.naver.redirect-uri={baseUrl}/{action}/oauth2/code/{registrationId}
+spring.security.oauth2.client.registration.naver.authorization-grant-type=authorization_code
+spring.security.oauth2.client.registration.naver.scope=name,email,profile_image
+spring.security.oauth2.client.registration.naver.client-name=Naver
+
+# provider
+spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize
+spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token
+spring.security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me
+spring.security.oauth2.client.provider.naver.user-name-attribute=response
+```
+
+
+
+> OAuth 구현한 프로젝트 구조 
+
+#### ✏ Main
+
+* **domain**
+   * user
+     * Role
+     * User
+     * UserRepository
+
+* **config**
+  * **auth**
+    * **dto**
+      * OAuthAttributes
+      * SessionUser
+    * CustomOAuth2UserService
+    * LoginUser
+    * LoginUserArgumentReslover
+    * SecurityConfig
+  * JpaConfig
+  * WebConfig
+
 
 
