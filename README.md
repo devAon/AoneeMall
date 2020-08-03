@@ -1679,24 +1679,31 @@ public class PostsListResponseDto {
 
 ### 📝Google
 
-![](https://i.imgur.com/teywoLF.png)
-
-<br>
-
-
-![](https://i.imgur.com/MN9BScv.png)
-
-<br>
-
-
-
-![](https://i.imgur.com/qfUDML7.png)
+<img src="https://i.imgur.com/teywoLF.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
 
 
 
 <br>
 
+
+
+<img src="https://i.imgur.com/MN9BScv.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+
+
+
+
 <br>
+
+
+
+
+
+<img src="https://i.imgur.com/qfUDML7.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
+
+
+
 
 <br>
 
@@ -1710,16 +1717,15 @@ public class PostsListResponseDto {
 
 ### 📝Naver
 
-![](https://i.imgur.com/teywoLF.png)
+<img src="https://i.imgur.com/teywoLF.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
 
 <br>
 
-
-![](https://i.imgur.com/o1TMg5b.png)
+<img src="https://i.imgur.com/o1TMg5b.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
 
 <br>
 
-![](https://i.imgur.com/qfUDML7.png)
+<img src="https://i.imgur.com/qfUDML7.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
 
 <br>
 
@@ -1735,7 +1741,23 @@ public class PostsListResponseDto {
 
 ### 📝 ISSUE
 
-![](https://i.imgur.com/isAts8i.png)
+<img src="https://i.imgur.com/isAts8i.png" width="50%" height="40%" title="px(픽셀) 크기 설정" alt="RubberDuck"></img>
+
 👉 **Naver**는 개발중인 상태에서는 등록된 아이디로만 로그인 가능하다. 
 즉, 외부 사용자는 가입하지 못한다. ❌ ~~출시를 해야겠네🤔~~
 👉 **Google**은 개발자 이메일 외에도 로그인 가능하다.⭕
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
