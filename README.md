@@ -72,13 +72,8 @@ dependencies {
     compile('com.h2database:h2')
     compile('org.springframework.boot:spring-boot-starter-mustache')
 
-    compile('org.springframework.boot:spring-boot-starter-oauth2-client')
-    compile('org.springframework.session:spring-session-jdbc')
-
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile("org.springframework.security:spring-security-test")
 }
-
 
 ```
 
@@ -1673,3 +1668,74 @@ public class PostsListResponseDto {
 메인화면에 전체 글 목록 조회 추가
 
 
+
+
+
+<br><br><br>
+
+
+
+## 📌 feature-11 : Oauth
+
+### 📝Google
+
+![](https://i.imgur.com/teywoLF.png)
+
+<br>
+
+
+![](https://i.imgur.com/MN9BScv.png)
+
+<br>
+
+
+
+![](https://i.imgur.com/qfUDML7.png)
+
+
+
+<br>
+
+<br>
+
+<br>
+
+
+
+
+
+
+
+
+
+### 📝Naver
+
+![](https://i.imgur.com/teywoLF.png)
+
+<br>
+
+
+![](https://i.imgur.com/o1TMg5b.png)
+
+<br>
+
+![](https://i.imgur.com/qfUDML7.png)
+
+<br>
+
+
+
+<br>
+
+<br>
+
+
+
+
+
+### 📝 ISSUE
+
+![](https://i.imgur.com/isAts8i.png)
+👉 **Naver**는 개발중인 상태에서는 등록된 아이디로만 로그인 가능하다. 
+즉, 외부 사용자는 가입하지 못한다. ❌ ~~출시를 해야겠네🤔~~
+👉 **Google**은 개발자 이메일 외에도 로그인 가능하다.⭕
