@@ -1751,13 +1751,71 @@ public class PostsListResponseDto {
 
 
 
+<br>
+
+
+
+<br>
+
+<br>
 
 
 
 
 
+### 📝 구현
 
 
+
+> application-oauth.properties
+
+
+
+```
+# Google
+spring.security.oauth2.client.registration.google.client-id=
+spring.security.oauth2.client.registration.google.client-secret=
+spring.security.oauth2.client.registration.google.scope=profile,email
+
+# Naver
+# registration
+spring.security.oauth2.client.registration.naver.client-id=
+spring.security.oauth2.client.registration.naver.client-secret=
+spring.security.oauth2.client.registration.naver.redirect-uri={baseUrl}/{action}/oauth2/code/{registrationId}
+spring.security.oauth2.client.registration.naver.authorization-grant-type=authorization_code
+spring.security.oauth2.client.registration.naver.scope=name,email,profile_image
+spring.security.oauth2.client.registration.naver.client-name=Naver
+
+# provider
+spring.security.oauth2.client.provider.naver.authorization-uri=https://nid.naver.com/oauth2.0/authorize
+spring.security.oauth2.client.provider.naver.token-uri=https://nid.naver.com/oauth2.0/token
+spring.security.oauth2.client.provider.naver.user-info-uri=https://openapi.naver.com/v1/nid/me
+spring.security.oauth2.client.provider.naver.user-name-attribute=response
+```
+
+
+
+> OAuth 구현한 프로젝트 구조 
+
+#### ✏ Main
+
+* **domain**
+   * user
+     * Role
+     * User
+     * UserRepository
+
+* **config**
+  * **auth**
+    * **dto**
+      * OAuthAttributes
+      * SessionUser
+    * CustomOAuth2UserService
+    * LoginUser
+    * LoginUserArgumentReslover
+    * SecurityConfig
+  * JpaConfig
+  * WebConfig
 
 
 
