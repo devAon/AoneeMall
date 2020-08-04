@@ -1857,7 +1857,7 @@ AWS에서 제공하는 성능, 용량 등을 유동적으로 사용할 수 있�
    굉장히 번거로우므로 인스턴스의 IP가 매번 변경되지 않고 고정 IP를 가지게 해야한다.     
 
    그래서 고정IP를 할당할 것이다. 
-     
+   
 
    **👿 주의**
    탄력적 IP는 생성하고 EC2 서버에 연결하지 않으면 비용이 발생한다.
@@ -1923,3 +1923,205 @@ Amazon AUrora 교체 용이하다.
 
 1. MariaDB 로 생성
 2. 파라미터 그룹 생성
+
+
+
+
+
+
+
+
+
+
+
+<br><br><br>
+
+
+
+## 📌 feature-21 : 배포
+
+### 📝 EC2에 프로젝트 clone
+
+sudo yum install git
+
+git --version
+
+mkdir ~/app && mkdir ~/app/step1
+
+cd ~/app/step1
+
+git clone 깃허브 http 주소
+
+cd aoneemall
+
+ll
+
+./gradlew test  # 코드 잘 수행되는지 검증
+
+git pull #권한이 없다면 ? chmod +x ./gradlew
+
+
+
+
+
+<br>
+
+
+
+### 📝 배포 스크립트 작성
+
+#### ✏  배포란 ? 
+
+작성한 코드를 실제 서버에 반영하는 것
+
+해당 프로젝트에서 배포는 아래의 과정을 모두 포괄하는 의미이다.
+
+* git clone 혹은 git pull을 통해 새 버전의 프로젝트를 받음
+* Gradle 이나 Maven을 통해 프로젝트 테스트와 빌드
+* EC2 서버에서 해당 프로젝트 실행 및 재실행
+
+
+
+#### ✏  쉘 스크립트 작성
+
+deploy.sh 파일 생성
+
+
+
+```
+
+#! /bin/bash
+
+REPOSITORY=/home/ec2-user/app/step1
+PROJECT_NAME=aoneemall
+
+cd $REPOSITORY/$PROJECT_NAME/
+
+echo "> Git Pull"
+
+git pull
+
+echo "> Start Building Project"
+
+./gradlew build
+
+echo "> Change Directory to step1"
+
+cd $REPOSITORY
+
+echo "> Copy Build Files"
+
+cp $REPOSITORY/$PROJECT_NAME/build/libs/*.jar $REPOSITORY/
+
+echo "> Check Current Application Pids"
+
+# pgrep : process id만 추출
+# -f : process 이름으로 검색
+CURRENT_PID=$(pgrep -f ${PROJECT_NAME}*.jar)
+
+echo "> Current Application Pids : $CURRENT_PID"
+
+if [ -z "$CURRENT_PID" ] ; then
+	echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+
+else
+	echo "> kill -15 $CURRENT_PID"
+	kill -15 $CURRENT_PID
+	sleep 5
+fi
+
+echo "> Deploy New Application"
+
+# 새로 실행할 jar파일 찾아서
+# 여러 jar파일 중 가장 마지막(최신) 파일을 변수에 저장
+JAR_NAME=$(ls -tr $REPOSITORY/ | grep *.jar | tail -n 1)
+
+echo "> JAR NAME : JAR_NAME"
+
+# nohup으로 파일 실행
+# application-oauth.properties 파일 위치 설정
+nohup java -jar \
+        -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties \
+        $REPOSITORY/$JAR_NAME 2>&1 &
+```
+
+
+
+
+
+
+
+<br>
+
+
+
+**🙋‍♀️ 쉘 스크립트를 작성하는 이유는 ?**
+
+배포할 때마다 개발자가 하나하나 명령어를 실행하는 것은 많은 불편함이 따른다.
+
+그래서 쉘 스크립트를 작성해 스크립트만 실행하면 차례로 진행되도록 할 수 있다.
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+### 📝 외부 Securiy 파일 등록
+
+서버에 gitignore된 application-oauth.properties 추가
+
+
+
+
+
+<br>
+
+
+
+### 📝 스프링 부트 프로젝트로 RDS 접근
+
+#### ✏  테이블 생성
+
+H2에서 자동 생성해주던 테이블을 MarialDB에 직접 쿼리를 이용해 생성해줌
+
+
+
+<br>
+
+
+
+#### ✏  프로젝트 설정
+
+자바 프로젝트가 MariaDB에 접근하려면 DB Driver가 필요.
+
+build.gradle에 의존성 추가
+
+
+
+<br>
+
+
+
+#### ✏ EC2 설정
+
+DB 접속 정보는 중요하게 보호해야 할 정보이다.   
+
+공개되면 외부에서 데이터를 모두 가져갈 수 있기 때문이다.   
+
+프로젝트 안에 접속 정보를 갖고 있으면 깃허브 같이 오픈된 공간에선 누구나 해킹할 위험이 있다.     
+
+EC2 서버 내부에서 접속 정보를 관리하도록 설정   
+
+
+
+
+
+
+
